@@ -12,13 +12,18 @@ import Input from '../inputs/Input'
 import { toast } from 'react-hot-toast'
 import Button from '../Button'
 import { signIn } from 'next-auth/react'
+import useLoginModal from '../../hooks/useLoginModal'
+import { useRouter } from 'next/navigation'
 
 interface RegisterModalProps {}
 
 const RegisterModal: FC<RegisterModalProps> = ({}) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+
+	const loginModal = useLoginModal()
 	const registerModal = useRegisterModal()
 
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const router = useRouter()
 
 	const {
 		register,
@@ -39,15 +44,32 @@ const RegisterModal: FC<RegisterModalProps> = ({}) => {
 			.post('/api/register', data)
 			.then(res => {
 				registerModal.onClose()
-				console.log(res)
+				toast.success('Account created successfully')
+
+				signIn('credentials', {
+					...data,
+					redirect: false,
+				}).then(res => {
+					if (res?.ok) {
+						toast.success('Logged in successfully!')
+						router.refresh()
+					} else {
+						toast.error(res?.error || 'Something went wrong!')
+					}
+				})
 			})
 			.catch(err => {
-				toast.error(err.response.data.message || err.message || 'Something went wrong')
+				toast.error(err.response.data.message || err.response.data.error || err.message || 'Something went wrong')
 			})
 			.finally(() => {
 				setIsLoading(false)
 			})
 	}
+
+	const toggle = useCallback(() => {
+		registerModal.onClose()
+		loginModal.onOpen()
+	}, [registerModal, loginModal])
 
 	const bodyContent = (
 		<div className='flex flex-col gap-4'>
@@ -69,12 +91,24 @@ const RegisterModal: FC<RegisterModalProps> = ({}) => {
 	const footerContent = (
 		<div className='flex flex-col gap-4 mt-3'>
 			<hr />
-			<Button outline label='Continue with Google' icon={FcGoogle} disabled={isLoading} onClick={() => signIn('google')} />
-			<Button outline label='Continue with Github' icon={AiFillGithub} disabled={isLoading} onClick={() => signIn('github')} />
+			<Button
+				outline
+				label='Continue with Google'
+				icon={FcGoogle}
+				disabled={isLoading}
+				onClick={() => signIn('google')}
+			/>
+			<Button
+				outline
+				label='Continue with Github'
+				icon={AiFillGithub}
+				disabled={isLoading}
+				onClick={() => signIn('github')}
+			/>
 			<div className='text-neutral-500 text-center mt-4 font-light'>
 				<div className='flex flex-row justify-center items-center gap-2'>
 					<div>Already have an account?</div>
-					<div onClick={registerModal.onClose} className='to-neutral-800 cursor-pointer hover:underline'>
+					<div onClick={toggle} className='to-neutral-800 cursor-pointer hover:underline'>
 						Login{' '}
 					</div>
 				</div>

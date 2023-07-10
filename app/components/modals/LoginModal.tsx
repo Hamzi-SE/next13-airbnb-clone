@@ -1,7 +1,7 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { AiFillGithub } from 'react-icons/ai'
@@ -13,15 +13,17 @@ import Modal from './Modal'
 
 import { useRouter } from 'next/navigation'
 import useLoginModal from '../../hooks/useLoginModal'
+import useRegisterModal from '../../hooks/useRegisterModal'
 
 interface LoginModalProps {}
 
 const LoginModal: FC<LoginModalProps> = ({}) => {
-	
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const router = useRouter()
+
 	const loginModal = useLoginModal()
+	const registerModal = useRegisterModal()
 
 	const {
 		register,
@@ -43,7 +45,7 @@ const LoginModal: FC<LoginModalProps> = ({}) => {
 		}).then(res => {
 			setIsLoading(false)
 
-			if(res?.ok) {
+			if (res?.ok) {
 				loginModal.onClose()
 				toast.success('Logged in successfully!')
 				router.refresh()
@@ -51,9 +53,13 @@ const LoginModal: FC<LoginModalProps> = ({}) => {
 			} else {
 				toast.error(res?.error || 'Something went wrong!')
 			}
-
 		})
 	}
+
+	const toggle = useCallback(() => {
+		loginModal.onClose()
+		registerModal.onOpen()
+	}, [loginModal, registerModal])
 
 	const bodyContent = (
 		<div className='flex flex-col gap-4'>
@@ -74,13 +80,25 @@ const LoginModal: FC<LoginModalProps> = ({}) => {
 	const footerContent = (
 		<div className='flex flex-col gap-4 mt-3'>
 			<hr />
-			<Button outline label='Continue with Google' icon={FcGoogle} disabled={isLoading} onClick={() => signIn('google')} />
-			<Button outline label='Continue with Github' icon={AiFillGithub} disabled={isLoading} onClick={() => signIn('github')} />
+			<Button
+				outline
+				label='Continue with Google'
+				icon={FcGoogle}
+				disabled={isLoading}
+				onClick={() => signIn('google')}
+			/>
+			<Button
+				outline
+				label='Continue with Github'
+				icon={AiFillGithub}
+				disabled={isLoading}
+				onClick={() => signIn('github')}
+			/>
 			<div className='text-neutral-500 text-center mt-4 font-light'>
 				<div className='flex flex-row justify-center items-center gap-2'>
-					<div>Already have an account?</div>
-					<div onClick={loginModal.onClose} className='to-neutral-800 cursor-pointer hover:underline'>
-						Login{' '}
+					<div>First time using Airbnb?</div>
+					<div onClick={toggle} className='text-neutral-800 cursor-pointer hover:underline'>
+						Create an account{' '}
 					</div>
 				</div>
 			</div>

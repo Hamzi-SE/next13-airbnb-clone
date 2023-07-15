@@ -1,4 +1,4 @@
-import { Listing, User } from '@prisma/client'
+import { Listing, Reservation, User } from '@prisma/client'
 
 export type SafeUser = Omit<User, 'createdAt' | 'updatedAt' | 'emailVerified'> & {
 	createdAt: string
@@ -8,6 +8,13 @@ export type SafeUser = Omit<User, 'createdAt' | 'updatedAt' | 'emailVerified'> &
 
 export type SafeListing = Omit<Listing, 'createdAt'> & {
 	createdAt: string
+}
+
+export type SafeReservation = Omit<Reservation, 'createdAt' | 'startDate' | 'endDate' | 'listing'> & {
+	createdAt: string
+	startDate: string
+	endDate: string
+	listing: SafeListing
 }
 
 // Omit is a utility type that allows you to omit certain properties from a type.

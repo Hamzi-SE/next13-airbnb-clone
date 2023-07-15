@@ -1,6 +1,5 @@
 'use client'
 
-import { Reservation } from '@prisma/client'
 import axios from 'axios'
 import { differenceInCalendarDays, eachDayOfInterval } from 'date-fns'
 import { useRouter } from 'next/navigation'
@@ -13,7 +12,7 @@ import ListingHead from '../../components/listings/ListingHead'
 import ListingInfo from '../../components/listings/ListingInfo'
 import ListingReservation from '../../components/listings/ListingReservation'
 import useLoginModal from '../../hooks/useLoginModal'
-import { SafeListing, SafeUser } from '../../types'
+import { SafeListing, SafeReservation, SafeUser } from '../../types'
 
 const initialDateRange = {
 	startDate: new Date(),
@@ -24,7 +23,7 @@ const initialDateRange = {
 interface ListingClientProps {
 	listing: SafeListing & { user: SafeUser }
 	currentUser?: SafeUser | null
-	reservations?: Reservation[]
+	reservations?: SafeReservation[]
 }
 
 const ListingClient: FC<ListingClientProps> = ({ listing, currentUser, reservations = [] }) => {
@@ -55,6 +54,14 @@ const ListingClient: FC<ListingClientProps> = ({ listing, currentUser, reservati
 			return loginModal.onOpen()
 		}
 
+		if (!dateRange.startDate || !dateRange.endDate) {
+			return toast.error('Please select a date range')
+		}
+
+		if (listing?.userId === currentUser?.id) {
+			return toast.error('You cannot reserve your own listing')
+		}
+
 		setIsLoading(true)
 
 		axios
@@ -76,7 +83,7 @@ const ListingClient: FC<ListingClientProps> = ({ listing, currentUser, reservati
 			.finally(() => {
 				setIsLoading(false)
 			})
-	}, [currentUser, loginModal, dateRange, totalPrice, listing?.id, router])
+	}, [currentUser, loginModal, dateRange, totalPrice, listing?.id, router, listing?.userId])
 
 	useEffect(() => {
 		if (dateRange.startDate && dateRange.endDate) {

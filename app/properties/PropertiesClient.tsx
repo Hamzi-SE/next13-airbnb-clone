@@ -7,14 +7,14 @@ import { toast } from 'react-hot-toast'
 import Container from '../components/Container'
 import Heading from '../components/Heading'
 import ListingCard from '../components/listings/ListingCard'
-import { SafeReservation, SafeUser } from '../types'
+import { SafeListing, SafeReservation, SafeUser } from '../types'
 
-interface TripsClientProps {
-	reservations: SafeReservation[]
+interface PropertiesClientProps {
+	listings: SafeListing[]
 	currentUser?: SafeUser | null
 }
 
-const TripsClient: FC<TripsClientProps> = ({ reservations, currentUser }) => {
+const PropertiesClient: FC<PropertiesClientProps> = ({ listings, currentUser }) => {
 	const [deletingId, setDeletingId] = useState<string>('')
 
 	const router = useRouter()
@@ -24,9 +24,9 @@ const TripsClient: FC<TripsClientProps> = ({ reservations, currentUser }) => {
 			setDeletingId(id)
 
 			axios
-				.delete(`/api/reservations/${id}`)
+				.delete(`/api/listings/${id}`)
 				.then(res => {
-					toast.success(res.data?.message || 'Reservation cancelled successfully')
+					toast.success(res.data?.message || 'Listing deleted successfully')
 					router.refresh()
 				})
 				.catch(error => {
@@ -41,18 +41,17 @@ const TripsClient: FC<TripsClientProps> = ({ reservations, currentUser }) => {
 
 	return (
 		<Container>
-			<Heading title='Your Trips' subtitle="Where you've been and where you're going" />
+			<Heading title='Your Properties' subtitle='Here are the properties you have listed.' />
 
 			<div className='mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8'>
-				{reservations.map(reservation => (
+				{listings.map(listing => (
 					<ListingCard
-						key={reservation.id}
-						data={reservation.listing}
-						reservation={reservation}
-						actionId={reservation.id}
+						key={listing.id}
+						data={listing}
+						actionId={listing.id}
 						onAction={onCancel}
-						disabled={deletingId === reservation.id}
-						actionLabel='Cancel reservation'
+						disabled={deletingId === listing.id}
+						actionLabel='Delete Property'
 						currentUser={currentUser}
 					/>
 				))}
@@ -61,4 +60,4 @@ const TripsClient: FC<TripsClientProps> = ({ reservations, currentUser }) => {
 	)
 }
 
-export default TripsClient
+export default PropertiesClient

@@ -15,7 +15,7 @@ const FavoritesClient: FC<FavoritesClientProps> = ({ currentUser, favoriteListin
 	return (
 		<Container>
 			<Heading
-				title='Favorites'
+				title='Your Favorites'
 				subtitle={`List of places you have favorited. You have ${favoriteListings.length} favorite ${
 					favoriteListings.length === 1 ? 'listing' : 'listings'
 				}!`}

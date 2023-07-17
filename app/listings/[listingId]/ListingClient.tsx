@@ -72,10 +72,9 @@ const ListingClient: FC<ListingClientProps> = ({ listing, currentUser, reservati
 				listingId: listing?.id,
 			})
 			.then(() => {
-				toast.success('Listing reserved successfully')
+				toast.success('Listing reserved successfully!')
 				setDateRange(initialDateRange)
-				// redirect to /trips
-				router.refresh()
+				router.push('/trips')
 			})
 			.catch(() => {
 				toast.error('Something went wrong')

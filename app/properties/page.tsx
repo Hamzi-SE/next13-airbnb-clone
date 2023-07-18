@@ -1,9 +1,16 @@
 import EmptyState from '../components/EmptyState'
 
+import { Metadata } from 'next'
 import getCurrentUser from '../actions/getCurrentUser'
-import getReservations from '../actions/getReservations'
-import PropertiesClient from './PropertiesClient'
 import getListings from '../actions/getListings'
+import PropertiesClient from './PropertiesClient'
+
+export async function generateMetadata(): Promise<Metadata> {
+	return {
+		title: 'Your properties',
+		description: 'Manage your properties here.',
+	}
+}
 
 const PropertiesPage = async ({}) => {
 	const currentUser = await getCurrentUser()

@@ -11,12 +11,13 @@ import ToasterProvider from './providers/ToasterProvider'
 const font = Nunito({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+	metadataBase: new URL('https://airbnb-clone-hamza.vercel.app/'),
 	title: {
 		default: 'Airbnb',
 		template: '%s | Airbnb',
 	},
 	description: 'Airbnb clone built with Next.js 13 and Tailwind CSS',
-	keywords: ['Airbnb', 'Next.js', 'Tailwind CSS'],
+	keywords: ['Airbnb', 'Next.js', 'Tailwind CSS', 'TypeScript', 'React'],
 	icons: {
 		icon: '/favicon.ico',
 	},

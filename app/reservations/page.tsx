@@ -1,8 +1,16 @@
 import EmptyState from '../components/EmptyState'
 
+import { Metadata } from 'next'
 import getCurrentUser from '../actions/getCurrentUser'
 import getReservations from '../actions/getReservations'
 import ReservationsClient from './ReservationsClient'
+
+export async function generateMetadata(): Promise<Metadata> {
+	return {
+		title: 'Your reservations',
+		description: 'Manage your reservations here.',
+	}
+}
 
 const ReservationsPage = async () => {
 	const currentUser = await getCurrentUser()
